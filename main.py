@@ -1,7 +1,7 @@
 #!/usr/bin/env pybricks-micropython
 
 # -----------------------------------------------------------------
-# Coach programming the Sturgeon 3000 as the 2022 Hooey Sucker
+# Coach's programming of the Sturgeon 3000 as the 2022 Hooey Sucker
 # -----------------------------------------------------------------
  
 from pybricks.hubs import EV3Brick

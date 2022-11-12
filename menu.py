@@ -14,7 +14,7 @@ def wait_for_button(ev3):
     # remember what each button will do in your program.
 
     # Wait for a single button to be pressed and save the result.
-    
+
     pressed = []
     while len(pressed) != 1:
         pressed = ev3.buttons.pressed()
@@ -38,7 +38,4 @@ def make_screen(ev3, run_name, page, check1, check2, check3, check4):
     ev3.screen.draw_text(1, 60, "> " + check2)
     ev3.screen.draw_text(1, 80, "> " + check3)
     ev3.screen.draw_text(1, 100, "> " + check4)
-
-
-
     
