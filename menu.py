@@ -14,6 +14,7 @@ def wait_for_button(ev3):
     # remember what each button will do in your program.
 
     # Wait for a single button to be pressed and save the result.
+    
     pressed = []
     while len(pressed) != 1:
         pressed = ev3.buttons.pressed()
