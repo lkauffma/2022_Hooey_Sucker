@@ -14,118 +14,114 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 from menu import wait_for_button
 from menu import make_screen
 
-def initialize():
 
-    RIGHT_SENSOR_WHITE=90
-    LEFT_SENSOR_WHITE=90
-    RIGHT_SENSOR_BLACK=8
-    LEFT_SENSOR_BLACK=8
+RIGHT_SENSOR_WHITE=90
+LEFT_SENSOR_WHITE=90
+RIGHT_SENSOR_BLACK=8
+LEFT_SENSOR_BLACK=8
 
-    # Initialize the EV3.
-    ev3 = EV3Brick()
+# Initialize the EV3.
+ev3 = EV3Brick()
 
-    # Initialize the motors.
-    am = Motor(Port.A)
-    left_motor = Motor(Port.C)
-    right_motor = Motor(Port.B)
+# Initialize the motors.
+am = Motor(Port.A)
+left_motor = Motor(Port.C)
+right_motor = Motor(Port.B)
 
-    # Initialize the sensors 
-    line_sensor = right_line_sensor = ColorSensor(Port.S1)
-    left_line_sensor = ColorSensor(Port.S4)
+# Initialize the sensors 
+line_sensor = right_line_sensor = ColorSensor(Port.S1)
+left_line_sensor = ColorSensor(Port.S4)
 
-    # Initialize the drive base. <comment about Sturgeon 3000 being 111mm>
-    robot = DriveBase(left_motor, right_motor, wheel_diameter=90, axle_track=111)
+# Initialize the drive base. <comment about Sturgeon 3000 being 111mm>
+robot = DriveBase(left_motor, right_motor, wheel_diameter=90, axle_track=111)
 
-    # ipk did creating and Initialize variables for speed and acceleration
-    # (209, 837, 400, 1600)
-    straight_speed = 209
-    straight_acceleration = 837 #837
-    turn_rate = 50 #400 
-    turn_acceleration = 1600
+# ipk did creating and Initialize variables for speed and acceleration
+# (209, 837, 400, 1600)
+straight_speed = 209
+straight_acceleration = 837 #837
+turn_rate = 50 #400 
+turn_acceleration = 1600
 
-    # menu variables by Ian
+
+def menu1():
+
+    # menu variables
     run_number = 0
     last_run_number = 5 
 
-    ev3.speaker.beep(100)
-    ev3.speaker.beep(900)
-    ev3.speaker.beep(100)
-    ev3.speaker.beep(900)
-
-def menu():
     while True:
     # Draw screen based on what run we are on
-    if run_number == 0:
-        make_screen(ev3,"Line Follow Test"," -  -  -  -  -  -  + ","", ""," "," ")
-
-    elif run_number == 1:
-        make_screen(ev3,"Watch Sensors"," -  -  -  -  -  -  + ","", ""," "," ")
-
-    elif run_number == 2:
-        make_screen(ev3,"Clean Wheels"," -  -  -  -  -  -  + ","", ""," "," ")
-
-    elif run_number == 3:
-        make_screen(ev3,"TV Windmill"," -  -  -  -  -  -  + ","", ""," "," ")
-
-    elif run_number == 4:
-        make_screen(ev3,"Dino Ride"," -  -  -  -  -  -  + ","", ""," "," ")
-
-    elif run_number == 4:
-        make_screen(ev3,"Forklift Demo"," -  -  -  -  -  -  + ","", ""," "," ")
-
-
-    # Wait for one button to be selected.
-    button = wait_for_button(ev3)
-
-    # Now you can do something, based on which button was pressed.
-    if button == Button.LEFT:
-        if run_number > 0: 
-            run_number = run_number - 1
-        else:
-            run_number = last_run_number
-
-    elif button == Button.RIGHT:
-        if run_number < last_run_number: 
-            run_number = run_number + 1
-        else:
-            run_number = 0
-
-    elif button == Button.UP:
-        if run_number > 0: 
-            run_number = run_number - 1
-        else:
-            run_number = last_run_number
-
-    elif button == Button.DOWN:
-        if run_number < last_run_number: 
-            run_number = run_number + 1
-        else:
-            run_number = 0
-
-    elif button == Button.CENTER:
         if run_number == 0:
-            followline2(1300, speed = 120, right_or_left_sensor = "left", side_of_line = "left", Kp = 1.0, Ki = 0.0008, Kd =.001)
+            make_screen(ev3,"Line Follow Test"," +  -  -  -  -  -  - ","", ""," "," ")
 
         elif run_number == 1:
-            watch_sensors()
+            make_screen(ev3,"Watch Sensors"," -  +  -  -  -  -  - ","", ""," "," ")
 
         elif run_number == 2:
-            clean_wheels()
+            make_screen(ev3,"Clean Wheels"," -  -  +  -  -  -  - ","", ""," "," ")
 
         elif run_number == 3:
-            tv_windmill()
+            make_screen(ev3,"TV Windmill"," -  -  -  +  -  -  - ","", ""," "," ")
 
         elif run_number == 4:
-            dino() 
+            make_screen(ev3,"Dino Ride"," -  -  -  -  +  -  - ","", ""," "," ")
 
         elif run_number == 5:
-            forklift_demo()            
+            make_screen(ev3,"Forklift Demo"," -  -  -  -  -  +  - ","", ""," "," ")
 
-        # Move on to next run screen
-        if run_number < last_run_number: 
-            run_number = run_number + 1
-        else:
-            run_number = 0  
+
+        # Wait for one button to be selected.
+        button = wait_for_button(ev3)
+
+    # Now you can do something, based on which button was pressed.
+        if button == Button.LEFT:
+            if run_number > 0: 
+                run_number = run_number - 1
+            else:
+                run_number = last_run_number
+
+        elif button == Button.RIGHT:
+            if run_number < last_run_number: 
+                run_number = run_number + 1
+            else:
+                run_number = 0
+
+        elif button == Button.UP:
+            if run_number > 0: 
+                run_number = run_number - 1
+            else:
+                run_number = last_run_number
+
+        elif button == Button.DOWN:
+            if run_number < last_run_number: 
+                run_number = run_number + 1
+            else:
+                run_number = 0
+
+        elif button == Button.CENTER:
+            if run_number == 0:
+                followline2(1300, speed = 120, right_or_left_sensor = "left", side_of_line = "left", Kp = 1.0, Ki = 0.0008, Kd =.001)
+
+            elif run_number == 1:
+                watch_sensors()
+
+            elif run_number == 2:
+                clean_wheels()
+
+            elif run_number == 3:
+                tv_windmill()
+
+            elif run_number == 4:
+                dino() 
+
+            elif run_number == 5:
+                forklift_demo()            
+
+            # Move on to next run screen
+            if run_number < last_run_number: 
+                run_number = run_number + 1
+            else:
+                run_number = 0  
 
 def clean_wheels():
     robot.straight(2500)
@@ -256,9 +252,6 @@ def watch_sensors():
     while any(ev3.buttons.pressed()):
         pass
 
-def right_motor_run():
-    am.run(1000)
-
 def dino():
     set_straight_speed(1000)
     robot.straight(2000)
@@ -295,9 +288,10 @@ def tv_windmill():
     robot.straight(-700)
 
 
-
-# Initialize everything
-initialize()
+ev3.speaker.beep(100)
+ev3.speaker.beep(900)
+ev3.speaker.beep(100)
+ev3.speaker.beep(900)
 
 # Call desired menu system
-menu()
+menu1()
