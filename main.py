@@ -124,7 +124,7 @@ def menu1():
                 run_number = 0  
 
 def clean_wheels():
-    robot.straight(2500)
+    robot.straight(1500)
 
 def set_turn_rate(rate):
 
