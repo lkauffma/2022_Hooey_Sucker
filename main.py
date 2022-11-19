@@ -3,7 +3,8 @@
 # -----------------------------------------------------------------
 # Coach's programming of the Sturgeon 3000 as the 2022 Hooey Sucker
 # -----------------------------------------------------------------
- 
+
+# imports
 from pybricks.hubs import EV3Brick
 from pybricks.parameters import Port, Stop, Direction, Button, Color 
 from pybricks.ev3devices import Motor, TouchSensor, ColorSensor, InfraredSensor, UltrasonicSensor, GyroSensor
