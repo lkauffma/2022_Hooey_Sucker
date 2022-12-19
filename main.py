@@ -12,15 +12,15 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 
-from menu import wait_for_button
-from menu import make_screen
+from menu import wait_for_button, make_screen
 
+import operator
 
-RIGHT_SENSOR_WHITE=90
-LEFT_SENSOR_WHITE=90
-RIGHT_SENSOR_BLACK=8
-LEFT_SENSOR_BLACK=8
-
+BACK_SENSOR_WHITE=99
+FRONT_SENSOR_WHITE=73
+BACK_SENSOR_BLACK=8
+FRONT_SENSOR_BLACK=6
+  
 # Initialize the EV3.
 ev3 = EV3Brick()
 
@@ -30,8 +30,8 @@ left_motor = Motor(Port.C)
 right_motor = Motor(Port.B)
 
 # Initialize the sensors 
-line_sensor = right_line_sensor = ColorSensor(Port.S1)
-left_line_sensor = ColorSensor(Port.S4)
+back_line_sensor = ColorSensor(Port.S1)  #was right
+front_line_sensor = ColorSensor(Port.S4) #was left
 
 # Initialize the drive base. <comment about Sturgeon 3000 being 111mm>
 robot = DriveBase(left_motor, right_motor, wheel_diameter=90, axle_track=111)
@@ -43,6 +43,11 @@ straight_acceleration = 837 #837
 turn_rate = 50 #400 
 turn_acceleration = 1600
 
+def reep():
+    am.run_time(-200,2000)
+
+def reset_reeper():
+    am.run_time(200,2000)
 
 def menu1():
 
@@ -176,38 +181,46 @@ def dispense():
     am.run_time(-2000,700)# speed and time, negative is dispense
     am.run_time(2000,700)# speed and time, positive is reset
 
-def follow_line2( distance, speed = 80, right_or_left_sensor = "right", side_of_line = "left", Kp = 0.8, Ki = 0.0008, Kd =.001):
-    '''
-    Version 2 of the Digital Magic function to follow a line.  This version by Koen on 12-18-2020 to make it a PID line follower
-    and use 2 sensors!
+def follow_line( distance, speed = 80, desired_sensor = "back", side_of_line = "left", Kp = 0.8, Ki = 0.0008, Kd =.001):
 
-    Parameters:
-        distance - mm you want robot to travel
-        speed - speed of robot.
-        right_or_left_sensor - which sensor are you using ("right" or "left")
-        side_of_line = which side of black line are you following ("right" or "left") 
-        Kp - proportional gain
-        Ki - integral gain 
-        Kd - derivative gain      
-    '''
+    # Enter a negative distance to drive in reverse.  This matches pybricks robot.straight method
 
+    # creating a text file to analyze the following performance for tuning
+    title = open("title.txt", "w")
+    data = open("data.csv" , "w")
+
+    title.write("Speed=" + str(speed) + " Kp=" + str(Kp) + " Ki=" +  str(Ki) + " Kd=" + str(Kd))
+    data.write("Reading,Target,Sensor" + "\n")
+    
+    
     integral = 0
     derivative = 0
     last_error = 0
-
+    reading = 1
         
-    if (right_or_left_sensor == "right"):
-        sensor = right_line_sensor
-        target = (RIGHT_SENSOR_WHITE + RIGHT_SENSOR_BLACK) / 2
+    if (desired_sensor == "back"):
+        sensor = back_line_sensor
+        target = (BACK_SENSOR_WHITE + BACK_SENSOR_BLACK) / 2
     else:
-        sensor = left_line_sensor
-        target = (LEFT_SENSOR_WHITE + LEFT_SENSOR_BLACK) / 2
+        sensor = front_line_sensor
+        target = (FRONT_SENSOR_WHITE + FRONT_SENSOR_BLACK) / 2
 
     robot.reset()
     robot.stop()
 
+    if (distance >= 0):
+        we_are_not_there_yet = operator.lt 
+        print("lt - forward")
+    else:
+        we_are_not_there_yet = operator.gt
+        print("gt - reverse")
+
+
+    print(robot.state()[0], distance)
+
     # PID feedback loop
-    while robot.state()[0] < distance:
+    while we_are_not_there_yet(robot.state()[0],distance):  #ya, like I can teach a kid this
+        #print(robot.state()[0], distance)
         
         error = sensor.reflection() - target
         integral = integral + error
@@ -215,8 +228,11 @@ def follow_line2( distance, speed = 80, right_or_left_sensor = "right", side_of_
         
         # this is where the digital magic of a PID line follower happens
         turn_rate = Kp * error + Ki * integral + Kd * derivative
+
+        data.write(str(reading) + "," + str(target) + "," + str(target + turn_rate) + "\n")
+        reading = reading + 1
+
         if side_of_line == "left":
-            #print(speed - turn_rate)
             right_motor.run(speed - turn_rate)
             left_motor.run(speed + turn_rate)
         else:
@@ -226,6 +242,8 @@ def follow_line2( distance, speed = 80, right_or_left_sensor = "right", side_of_
         wait(10)
 
     robot.stop()  #make sure this is outside the loop!!
+    title.close()
+    data.close()
 
 def watch_sensors():
     wait(1000)
@@ -288,11 +306,56 @@ def tv_windmill():
     robot.turn(-90)
     robot.straight(-700)
 
+def slam_bang_finish():
+    robot.straight(-400)
+    robot.turn(-30)
+    robot.straight(-475) #475
+    robot.turn(-80) #80
+    robot.straight(255  )
+    robot.straight(-575)
+    robot.straight(200)
+ 
+def oil():
+    '''
+    # oil rig mission by Esther and Brayden
+    set_straight_speed(300) 
+    robot.straight(-750)
+    robot.turn(53)
+    robot.straight(250)
+
+    # Pump the well 3 times
+    robot.straight(-100)
+    robot.straight(120)
+    robot.straight(-100)
+    robot.straight(120)
+    '''
+
+    # drive back energy from solar farm
+    follow_line(-560, speed = -200, desired_sensor = "back", side_of_line = "left", Kp=0.3, Ki = 0.0000, Kd = 0.0)
+
+    '''
+    # reep the energy
+    reep()
+    follow_line(285, speed = 300, desired_sensor = "front", side_of_line = "left", Kp=0.5, Ki = 0.0000, Kd = 0.0)
+    robot.turn(-55) 
+    robot.straight(250)
+    robot.turn(5)
+    robot.straight(750)
+    reset_reeper()
+    '''
 
 ev3.speaker.beep(100)
 ev3.speaker.beep(900)
 ev3.speaker.beep(100)
 ev3.speaker.beep(900)
+
+
 
 # Call desired menu system
-menu1()
+# menu1()
+oil()
+
+# reep()
+# reset_reeper()
+
+
