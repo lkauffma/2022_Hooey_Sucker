@@ -210,13 +210,13 @@ def follow_line( distance, speed = 80, desired_sensor = "back", side_of_line = "
 
     if (distance >= 0):
         we_are_not_there_yet = operator.lt 
-        print("lt - forward")
+        #print("lt - forward")
     else:
         we_are_not_there_yet = operator.gt
-        print("gt - reverse")
+        #print("gt - reverse")
 
 
-    print(robot.state()[0], distance)
+    #print(robot.state()[0], distance)
 
     # PID feedback loop
     while we_are_not_there_yet(robot.state()[0],distance):  #ya, like I can teach a kid this
@@ -239,7 +239,7 @@ def follow_line( distance, speed = 80, desired_sensor = "back", side_of_line = "
             right_motor.run(speed + turn_rate)
             left_motor.run(speed - turn_rate)
         last_error = error
-        wait(10)
+        wait(5)
 
     robot.stop()  #make sure this is outside the loop!!
     title.close()
@@ -316,7 +316,7 @@ def slam_bang_finish():
     robot.straight(200)
  
 def oil():
-    '''
+    #'''
     # oil rig mission by Esther and Brayden
     set_straight_speed(300) 
     robot.straight(-750)
@@ -328,21 +328,23 @@ def oil():
     robot.straight(120)
     robot.straight(-100)
     robot.straight(120)
-    '''
+    #'''
 
     # drive back energy from solar farm
-    follow_line(-560, speed = -200, desired_sensor = "back", side_of_line = "left", Kp=0.3, Ki = 0.0000, Kd = 0.0)
+    follow_line(-570, speed = -200, desired_sensor = "back", side_of_line = "left", Kp=0.2, Ki = 0.0000, Kd = 0.00100)
 
-    '''
+    #'''
     # reep the energy
     reep()
-    follow_line(285, speed = 300, desired_sensor = "front", side_of_line = "left", Kp=0.5, Ki = 0.0000, Kd = 0.0)
+    #follow_line(285, speed = 300, desired_sensor = "front", side_of_line = "left", Kp=0.2, Ki = 0.0000, Kd = 0.001)
+    robot.straight(285)
+
     robot.turn(-55) 
     robot.straight(250)
     robot.turn(5)
     robot.straight(750)
     reset_reeper()
-    '''
+    #'''
 
 ev3.speaker.beep(100)
 ev3.speaker.beep(900)
@@ -354,7 +356,7 @@ ev3.speaker.beep(900)
 # Call desired menu system
 # menu1()
 oil()
-
+#robot.straight(600)
 # reep()
 # reset_reeper()
 
